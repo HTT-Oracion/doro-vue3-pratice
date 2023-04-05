@@ -1,4 +1,4 @@
-import { isObject } from "../shared";
+import { extend, isObject } from "../shared";
 import { track, trigger } from "./effect";
 import { ReactiveFlags, reactive, readonly } from "./reactive";
 
@@ -7,6 +7,7 @@ import { ReactiveFlags, reactive, readonly } from "./reactive";
 const get = createGetter();
 const set = createSetter();
 const readonlyGet = createGetter(true);
+const shallowReadonlyGet = createGetter(true, true);
 
 // proxy hanlder
 // 不可变的
@@ -14,6 +15,7 @@ export const mutableHandlers = {
   get,
   set,
 };
+export const baseHandlers = mutableHandlers;
 
 // readonly的
 export const readonlyHandlers = {
@@ -24,9 +26,14 @@ export const readonlyHandlers = {
   },
 };
 
+// 表层readonly
+export const shallowReadonlyHandlers = extend({}, readonlyHandlers, {
+  get: shallowReadonlyGet,
+});
+
 // proxy getter:
 // 按照vue3的方式封装成一个高阶函数，根据是否是 readonly去判断是否要收集依赖
-function createGetter(isReadonly = false) {
+function createGetter(isReadonly = false, shallow = false) {
   return function get(target, key) {
     // 调用的 isReactive
     if (key === ReactiveFlags.IS_REACTIVE) {
@@ -38,6 +45,10 @@ function createGetter(isReadonly = false) {
     }
 
     const res = Reflect.get(target, key);
+
+    // 如果是shallow，则不需要对它的子属性进行响应式
+    // 因为shallow的话，只有最外层是进行处理的
+    if (shallow) return res;
 
     // 当前值是否为对象
     if (isObject(res)) {
