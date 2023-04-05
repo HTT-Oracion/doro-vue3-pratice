@@ -1,6 +1,7 @@
 import { extend, isObject } from "../shared";
 import { track, trigger } from "./effect";
 import { ReactiveFlags, reactive, readonly } from "./reactive";
+import { isRef, unRef } from "./ref";
 
 // 提取出来的目的是，初始化的时候就生成一个getter/setter
 // 而不是每次调用mutableHandlers的时候再去生成
@@ -30,6 +31,25 @@ export const readonlyHandlers = {
 export const shallowReadonlyHandlers = extend({}, readonlyHandlers, {
   get: shallowReadonlyGet,
 });
+
+// proxyRefs hanlder
+export const shallowUnrefHandlers = {
+  get(target, key) {
+    return unRef(Reflect.get(target, key));
+  },
+  set(target, key, value) {
+    const oldValue = target[key];
+    // 分几种情况
+    if (isRef(Reflect.get(target, key)) && !isRef(value)) {
+      // 1.原值是ref, 新值不是ref，则更新.value
+      oldValue.value = value;
+      return true;
+    } else {
+      // 2.其他情况：新值是ref，则直接替换
+      return Reflect.set(target, key, value);
+    }
+  },
+};
 
 // proxy getter:
 // 按照vue3的方式封装成一个高阶函数，根据是否是 readonly去判断是否要收集依赖
