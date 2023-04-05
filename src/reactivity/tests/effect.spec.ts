@@ -1,5 +1,6 @@
 import { reactive } from "../reactive";
 import { effect, stop } from "../effect";
+// 部分test用例取至vue3源码
 describe("effect", () => {
   it("happy path", () => {
     const user = reactive({

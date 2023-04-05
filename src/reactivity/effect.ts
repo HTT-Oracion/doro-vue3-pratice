@@ -33,7 +33,7 @@ function cleanupEffect(effect) {
 
 const targetMap = new Map();
 
-// 收集依赖 （get）
+// 收集依赖 （如getter）
 export function track(target, key) {
   let depsMap = targetMap.get(target);
   if (!depsMap) {
@@ -52,7 +52,7 @@ export function track(target, key) {
   activeEffect.deps.push(dep);
 }
 
-// 触发依赖
+// 触发依赖 (如 setter)
 export function trigger(target, key) {
   let depsMap = targetMap.get(target);
   let dep = depsMap.get(key);
