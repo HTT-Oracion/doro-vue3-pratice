@@ -1,4 +1,5 @@
 import { track, trigger } from "./effect";
+import { ReactiveFlags } from "./reactive";
 
 // 提取出来的目的是，初始化的时候就生成一个getter/setter
 // 而不是每次调用mutableHandlers的时候再去生成
@@ -26,6 +27,15 @@ export const readonlyHandlers = {
 // 按照vue3的方式封装成一个高阶函数，根据是否是 readonly去判断是否要收集依赖
 function createGetter(isReadonly = false) {
   return function get(target, key) {
+    // 调用的 isReactive
+    if (key === ReactiveFlags.IS_REACTIVE) {
+      return !isReadonly;
+    }
+
+    if (key === ReactiveFlags.IS_READONLY) {
+      return isReadonly;
+    }
+
     const res = Reflect.get(target, key);
 
     if (!isReadonly) {
