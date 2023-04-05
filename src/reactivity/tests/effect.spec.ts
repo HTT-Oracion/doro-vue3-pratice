@@ -66,7 +66,12 @@ describe("effect", () => {
     obj.prop = 2;
     expect(dummy).toBe(2);
     stop(runner);
-    obj.prop = 3;
+    // obj.prop = 3; // 可以通过 因为只触发了setter
+    // 相当于 obj.prop = obj.prop + 1
+    // 触发了 getter和setter
+    // 需要做一些处理
+    obj.prop++;
+
     expect(dummy).toBe(2);
 
     // stopped effect should still be manually callable
