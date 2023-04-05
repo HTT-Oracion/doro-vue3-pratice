@@ -74,6 +74,7 @@ export function track(target, key) {
     depsMap.set(key, dep);
   }
 
+  // 如果已经收集过依赖了
   if (dep.has(activeEffect)) return;
   dep.add(activeEffect);
   activeEffect.deps.push(dep);

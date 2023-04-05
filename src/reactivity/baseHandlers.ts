@@ -1,5 +1,6 @@
+import { isObject } from "../shared";
 import { track, trigger } from "./effect";
-import { ReactiveFlags } from "./reactive";
+import { ReactiveFlags, reactive, readonly } from "./reactive";
 
 // 提取出来的目的是，初始化的时候就生成一个getter/setter
 // 而不是每次调用mutableHandlers的时候再去生成
@@ -31,12 +32,17 @@ function createGetter(isReadonly = false) {
     if (key === ReactiveFlags.IS_REACTIVE) {
       return !isReadonly;
     }
-
+    // 调用isReadonly
     if (key === ReactiveFlags.IS_READONLY) {
       return isReadonly;
     }
 
     const res = Reflect.get(target, key);
+
+    // 当前值是否为对象
+    if (isObject(res)) {
+      return isReadonly ? readonly(res) : reactive(res);
+    }
 
     if (!isReadonly) {
       // 依赖收集
