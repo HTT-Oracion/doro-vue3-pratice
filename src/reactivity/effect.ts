@@ -3,7 +3,7 @@ import { extend } from "../shared";
 let activeEffect;
 // 是否要收集依赖
 let shouldTrack;
-class ReactiveEffect {
+export class ReactiveEffect {
   private _fn: any;
   deps = [];
   active = true; // 区分是否调用了`stop`. （false则为调用了`stop`）
