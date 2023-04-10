@@ -1,5 +1,5 @@
-import { ShapeFlags } from "../shared/ShapeFlags";
-import { isArray, isObject, isString } from "../shared/index";
+import { isOn } from "../shared/index";
+import { ShapeFlags } from "../shared/shapeFlags";
 import { createComponentInstance, setupComponent } from "./component";
 
 // 渲染器
@@ -42,7 +42,6 @@ function mountElement(vnode: any, container: any) {
     // isArray(children)
     mountChildren(children, el);
   }
-  const isOn = (key: string) => /^on[A-Z]/.test(key);
   for (const key in props) {
     const val = props[key];
     if (isOn(key)) {

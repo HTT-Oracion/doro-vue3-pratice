@@ -1,4 +1,6 @@
+import { shallowReadonly } from "../reactivity/reactive";
 import { isObject } from "../shared/index";
+import { initProps } from "./componentProps";
 import { PublicInstanceHanlders } from "./componentPublicInstance";
 
 export function createComponentInstance(vnode: any) {
@@ -26,7 +28,7 @@ export function createComponentInstance(vnode: any) {
 
 export function setupComponent(instance: any) {
   // initProps
-
+  initProps(instance, shallowReadonly(instance.vnode.props));
   // initSlots
 
   // 初始化为有状态的组件
@@ -44,7 +46,7 @@ function setupStatefulComponent(instance: any) {
   const { setup } = Component;
 
   if (setup) {
-    const setupResult = setup();
+    const setupResult = setup(instance.props);
 
     handleSetupResult(instance, setupResult);
   }

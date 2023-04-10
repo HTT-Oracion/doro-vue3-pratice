@@ -1,12 +1,19 @@
+import { hasOwn } from "../shared/index";
+
 const publicPropertiesMap = {
   $el: (i) => i.vnode.el,
 };
 
 export const PublicInstanceHanlders = {
   get({ _: instance }, key) {
-    const { setupState } = instance;
-    if (key in setupState) {
+    const { setupState, props } = instance;
+
+    if (hasOwn(setupState, key)) {
+      // 获取 setup上的属性
       return setupState[key];
+    } else if (hasOwn(props, key)) {
+      // 获取 props上的属性
+      return props[key];
     }
 
     const publicGetter = publicPropertiesMap[key];

@@ -1,10 +1,10 @@
-import { ShapeFlags } from "../shared/ShapeFlags";
+import { ShapeFlags } from "../shared/shapeFlags";
 import { isArray } from "../shared/index";
 
 export function createVNode(type, props?, children?) {
   const vnode = {
     type,
-    props,
+    props: props ?? {},
     children,
     shapeFlag: getShapeFlag(type),
     el: null,

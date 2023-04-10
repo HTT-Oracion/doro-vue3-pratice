@@ -1,3 +1,4 @@
+import { isObject } from "../shared/index";
 import {
   mutableHandlers,
   readonlyHandlers,
@@ -42,6 +43,10 @@ export function isProxy(value) {
   return isReactive(value) || isReadonly(value);
 }
 
-function createActiveObject(raw, baseHandlers) {
-  return new Proxy(raw, baseHandlers);
+function createActiveObject(target, baseHandlers) {
+  if (!isObject(target)) {
+    console.warn(`value cannot be made reactive: ${String(target)}`);
+    return target;
+  }
+  return new Proxy(target, baseHandlers);
 }
