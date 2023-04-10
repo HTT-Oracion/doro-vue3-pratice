@@ -57,16 +57,16 @@ function processComponent(vnode: any, container: any) {
 }
 
 // 挂在组件
-function mountComponent(vnode: any, container: any) {
+function mountComponent(initialVNode: any, container: any) {
   // 创建组件实例
-  const instance = createComponentInstance(vnode);
+  const instance = createComponentInstance(initialVNode);
 
   // 处理setup
   setupComponent(instance);
-  setupRenderEffect(instance, vnode, container);
+  setupRenderEffect(instance, initialVNode, container);
 }
 
-function setupRenderEffect(instance: any, vnode: any, container: any) {
+function setupRenderEffect(instance: any, initialVNode: any, container: any) {
   const { proxy } = instance;
   // 得到一个ast树,实际上就是一个描述虚拟节点的对象
   const subTree = instance.render.call(proxy);
@@ -74,5 +74,5 @@ function setupRenderEffect(instance: any, vnode: any, container: any) {
   // 进行组件挂载
   patch(subTree, container);
   // 挂载完成后，将`mountElement`绑定的el取出
-  vnode.el = subTree.el;
+  initialVNode.el = subTree.el;
 }
