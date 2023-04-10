@@ -2,6 +2,8 @@
 
 1. 首先 调用 `createVNode()` 创建一个虚拟节点，然后调用`render()`, `render()`实际上是调用的`patch()`
 
+2. `createVNode()`里，通过`ShapeFlags`定义的组件类型，定义了当前的`shapeFlag`
+
 > 备注：实际上`h(type, props?, children?)`函数也是`createVNode`，如下实例代码
 
 ```js

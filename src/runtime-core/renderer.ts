@@ -1,3 +1,4 @@
+import { ShapeFlags } from "../shared/ShapeFlags";
 import { isArray, isObject, isString } from "../shared/index";
 import { createComponentInstance, setupComponent } from "./component";
 
@@ -9,11 +10,14 @@ export function render(vnode: any, container: any) {
 function patch(vnode: any, container: any) {
   // !! 先判断vnode 的类型
   // 再进行处理
-  // vue3是通过 >> 运算符去区分类型的
-  if (typeof vnode.type === "string") {
+  // vue3是通过 位 运算符去区分类型的
+  const { shapeFlag } = vnode;
+
+  if (shapeFlag & ShapeFlags.ELEMENT) {
+    // 元素类型 typeof vnode.type === "string"
     processElement(vnode, container);
-  } else if (isObject(vnode.type)) {
-    // 处理组件类型
+  } else if (shapeFlag & ShapeFlags.STATEFUL_COMPONENTS) {
+    // 处理组件类型 isObject(vnode.type)
     processComponent(vnode, container);
   }
 }
@@ -27,14 +31,16 @@ function processElement(vnode: any, container: any) {
 function mountElement(vnode: any, container: any) {
   const el = (vnode.el = document.createElement(vnode.type));
 
-  const { children, props } = vnode;
+  const { children, props, shapeFlag } = vnode;
 
   // 需要判断children是数组还是字符串
-
-  if (isArray(children)) {
-    mountChildren(children, el);
-  } else if (isString(children)) {
+  // 通过位运算符 &
+  if (shapeFlag & ShapeFlags.TEXT_CHILDREN) {
+    // isString(children)
     el.textContent = children;
+  } else if (shapeFlag & ShapeFlags.ARRAY_CHILDREN) {
+    // isArray(children)
+    mountChildren(children, el);
   }
 
   for (const key in props) {
