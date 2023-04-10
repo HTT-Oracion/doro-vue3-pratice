@@ -6,7 +6,10 @@ export default {
         console.log(this);
         return h("div", {
             tag: 'div',
-            class: ['cs1', 'cs2']
+            class: ['cs1', 'cs2'],
+            onClick: () => {
+                console.log('click!!');
+            }
         }, [
             h("p", { class: 'red title' }, "title"),
             h("span", { class: 'blue desc' }, "desc " + this.msg)

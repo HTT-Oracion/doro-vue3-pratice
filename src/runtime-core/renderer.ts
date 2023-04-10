@@ -42,9 +42,15 @@ function mountElement(vnode: any, container: any) {
     // isArray(children)
     mountChildren(children, el);
   }
-
+  const isOn = (key: string) => /^on[A-Z]/.test(key);
   for (const key in props) {
-    el.setAttribute(key, props[key]);
+    const val = props[key];
+    if (isOn(key)) {
+      const event = key.slice(2).toLowerCase();
+      el.addEventListener(event, val);
+    } else {
+      el.setAttribute(key, val);
+    }
   }
 
   container.append(el);
