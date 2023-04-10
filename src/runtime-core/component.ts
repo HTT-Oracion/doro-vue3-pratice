@@ -1,4 +1,5 @@
 import { isObject } from "../shared/index";
+import { PublicInstanceHanlders } from "./componentPublicInstance";
 
 export function createComponentInstance(vnode: any) {
   // type即当前的组件
@@ -18,6 +19,7 @@ export function createComponentInstance(vnode: any) {
   const componet = {
     vnode,
     type: vnode.type,
+    setupState: {},
   };
   return componet;
 }
@@ -35,6 +37,8 @@ export function setupComponent(instance: any) {
 function setupStatefulComponent(instance: any) {
   // 当前组件
   const Component = instance.type;
+
+  instance.proxy = new Proxy({ _: instance }, PublicInstanceHanlders);
 
   // 获取setup的返回值
   const { setup } = Component;

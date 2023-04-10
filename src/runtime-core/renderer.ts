@@ -7,10 +7,9 @@ export function render(vnode: any, container: any) {
 }
 
 function patch(vnode: any, container: any) {
-  console.log(vnode);
-
   // !! 先判断vnode 的类型
   // 再进行处理
+  // vue3是通过 >> 运算符去区分类型的
   if (typeof vnode.type === "string") {
     processElement(vnode, container);
   } else if (isObject(vnode.type)) {
@@ -26,7 +25,7 @@ function processElement(vnode: any, container: any) {
 
 // 挂载普通元素
 function mountElement(vnode: any, container: any) {
-  const el = document.createElement(vnode.type);
+  const el = (vnode.el = document.createElement(vnode.type));
 
   const { children, props } = vnode;
 
@@ -64,13 +63,16 @@ function mountComponent(vnode: any, container: any) {
 
   // 处理setup
   setupComponent(instance);
-  setupRenderEffect(instance, container);
+  setupRenderEffect(instance, vnode, container);
 }
 
-function setupRenderEffect(instance: any, container: any) {
+function setupRenderEffect(instance: any, vnode: any, container: any) {
+  const { proxy } = instance;
   // 得到一个ast树,实际上就是一个描述虚拟节点的对象
-  const subTree = instance.render();
+  const subTree = instance.render.call(proxy);
 
   // 进行组件挂载
   patch(subTree, container);
+  // 挂载完成后，将`mountElement`绑定的el取出
+  vnode.el = subTree.el;
 }
