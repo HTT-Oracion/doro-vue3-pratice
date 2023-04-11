@@ -1,5 +1,5 @@
 import { ShapeFlags } from "../shared/shapeFlags";
-import { isArray } from "../shared/index";
+import { isArray, isObject } from "../shared/index";
 
 export function createVNode(type, props?, children?) {
   const vnode = {
@@ -18,6 +18,14 @@ export function createVNode(type, props?, children?) {
     // type为array(组件) 0010 | 1000 => 1000
   } else if (isArray(children)) {
     vnode.shapeFlag |= ShapeFlags.ARRAY_CHILDREN;
+  }
+
+  // slots?
+  // 虚拟节点为组件类型 且 children为object
+  if (vnode.shapeFlag & ShapeFlags.STATEFUL_COMPONENTS) {
+    if (isObject(children)) {
+      vnode.shapeFlag |= ShapeFlags.SLOT_CHILDREN;
+    }
   }
 
   return vnode;

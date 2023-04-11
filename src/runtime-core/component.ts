@@ -3,6 +3,7 @@ import { isObject } from "../shared/index";
 import { emit } from "./componentEmit";
 import { initProps } from "./componentProps";
 import { PublicInstanceHanlders } from "./componentPublicInstance";
+import { initSlots } from "./componentSlots";
 
 export function createComponentInstance(vnode: any) {
   // type即当前的组件
@@ -25,6 +26,7 @@ export function createComponentInstance(vnode: any) {
     setupState: {},
     props: {},
     emit: () => {},
+    slots: {},
   };
 
   componet.emit = emit.bind(null, componet) as any;
@@ -36,6 +38,7 @@ export function setupComponent(instance: any) {
   // initProps
   initProps(instance, shallowReadonly(instance.vnode.props));
   // initSlots
+  initSlots(instance, instance.vnode.children);
 
   // 初始化为有状态的组件
   setupStatefulComponent(instance);

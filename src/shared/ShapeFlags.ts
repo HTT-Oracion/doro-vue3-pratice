@@ -7,7 +7,8 @@
 // 查找是否为ELEMENT时: 用 ShapeFlags.ELEMENT & 目标shape，为true则是element
 export const enum ShapeFlags {
   ELEMENT = 1, // 0001
-  STATEFUL_COMPONENTS = 1 << 2, // 0010
-  TEXT_CHILDREN = 1 << 3, // 0100
-  ARRAY_CHILDREN = 1 << 4, // 1000
+  STATEFUL_COMPONENTS = 1 << 1, // 0010
+  TEXT_CHILDREN = 1 << 2, // 0100
+  ARRAY_CHILDREN = 1 << 3, // 1000
+  SLOT_CHILDREN = 1 << 4, // 1000
 }

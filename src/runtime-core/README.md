@@ -68,3 +68,46 @@ export default {
       vnode.el = subTree.el;
     }
     ```
+
+## createVNode 简化
+
+```ts
+// 定义了用区分组件类型的 ShapeFlags
+export const enum ShapeFlags {
+  ELEMENT = 1, // 0001
+  STATEFUL_COMPONENTS = 1 << 1, // 0010
+  TEXT_CHILDREN = 1 << 2, // 0100
+  ARRAY_CHILDREN = 1 << 3, // 1000
+  SLOT_CHILDREN = 1 << 4, // ...
+}
+// 给vnode.shapeFlag赋值
+if (typeof children === "string") {
+  // type为string(如div)  0001 | 0100 => 0100
+  // type为array(组件)  0010 | 0100 => 0100
+  vnode.shapeFlag |= 4 /* ShapeFlags.TEXT_CHILDREN */;
+  // type为string(如div) 0001 | 1000 => 1000
+  // type为array(组件) 0010 | 1000 => 1000
+} else if (isArray(children)) {
+  vnode.shapeFlag |= 8 /* ShapeFlags.ARRAY_CHILDREN */;
+}
+// slots?
+// 虚拟节点为组件类型 且 children为object
+if (vnode.shapeFlag & 2 /* ShapeFlags.STATEFUL_COMPONENTS */) {
+  if (isObject(children)) {
+    vnode.shapeFlag |= 16 /* ShapeFlags.SLOT_CHILDREN */;
+  }
+}
+```
+
+## initSlots 简化
+
+```ts
+// 判断当前节点的children类型
+// 如果为 SLOT_CHILDREN类型，则需要渲染成 slot的vnode
+// 更新 instance.slots
+// 插槽作用域: 应为一个函数，同时把props作为参数传过去
+for (const key in children) {
+  const value = children[key];
+  slots[key] = (props) => normalizeSlotValue(value(props));
+}
+```
