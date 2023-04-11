@@ -1,6 +1,8 @@
 import { ShapeFlags } from "../shared/shapeFlags";
-import { isArray, isObject } from "../shared/index";
+import { isArray } from "../shared/index";
 
+export const Fragment = Symbol("Fragment");
+export const Text = Symbol("Text");
 export function createVNode(type, props?, children?) {
   const vnode = {
     type,
@@ -23,12 +25,16 @@ export function createVNode(type, props?, children?) {
   // slots?
   // 虚拟节点为组件类型 且 children为object
   if (vnode.shapeFlag & ShapeFlags.STATEFUL_COMPONENTS) {
-    if (isObject(children)) {
+    if (typeof children === "object") {
       vnode.shapeFlag |= ShapeFlags.SLOT_CHILDREN;
     }
   }
 
   return vnode;
+}
+
+export function createTextVNode(text) {
+  return createVNode(Text, {}, text);
 }
 
 function getShapeFlag(type) {

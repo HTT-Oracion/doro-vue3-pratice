@@ -1,4 +1,4 @@
-import { h } from '../../lib/guide-mini-vue.esm.js'
+import { h, createTextVNode } from '../../lib/guide-mini-vue.esm.js'
 import Foo from './Foo.js'
 export default {
     render () {
@@ -11,7 +11,7 @@ export default {
             header: ({ count }) => h("p", {}, "header: count is" + count),
             footer: () => h("p", {}, "footer")
         })
-        return h('div', {}, [app, foo])
+        return h('div', {}, [app, foo, createTextVNode('text node')])
     },
     setup () {
         return {

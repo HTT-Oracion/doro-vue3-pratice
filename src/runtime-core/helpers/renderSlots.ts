@@ -1,5 +1,5 @@
 import { isFunction } from "../../shared/index";
-import { createVNode } from "../vnode";
+import { Fragment, createVNode } from "../vnode";
 
 /**
  * 返回对应插槽的虚拟节点
@@ -12,7 +12,7 @@ export function renderSlots(slots, name, props) {
   const slot = slots[name];
   if (slot) {
     if (isFunction(slot)) {
-      return createVNode("div", {}, slot(props));
+      return createVNode(Fragment, {}, slot(props));
     }
   }
 }

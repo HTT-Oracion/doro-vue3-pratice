@@ -1,6 +1,7 @@
 import { isOn } from "../shared/index";
 import { ShapeFlags } from "../shared/shapeFlags";
 import { createComponentInstance, setupComponent } from "./component";
+import { Fragment, Text } from "./vnode";
 
 // 渲染器
 export function render(vnode: any, container: any) {
@@ -11,15 +12,37 @@ function patch(vnode: any, container: any) {
   // !! 先判断vnode 的类型
   // 再进行处理
   // vue3是通过 位 运算符去区分类型的
-  const { shapeFlag } = vnode;
-
-  if (shapeFlag & ShapeFlags.ELEMENT) {
-    // 元素类型 typeof vnode.type === "string"
-    processElement(vnode, container);
-  } else if (shapeFlag & ShapeFlags.STATEFUL_COMPONENTS) {
-    // 处理组件类型 isObject(vnode.type)
-    processComponent(vnode, container);
+  const { type, shapeFlag } = vnode;
+  switch (type) {
+    case Fragment:
+      processFragment(vnode, container);
+      break;
+    case Text:
+      processText(vnode, container);
+      break;
+    default:
+      if (shapeFlag & ShapeFlags.ELEMENT) {
+        // 元素类型 typeof vnode.type === "string"
+        processElement(vnode, container);
+      } else if (shapeFlag & ShapeFlags.STATEFUL_COMPONENTS) {
+        // 处理组件类型 isObject(vnode.type)
+        processComponent(vnode, container);
+      }
+      break;
   }
+}
+
+// 处理text node
+// children是传过来的文本内容
+function processText(vnode: any, container: any) {
+  const { children } = vnode;
+  const textNode = (vnode.el = document.createTextNode(children));
+  container.append(textNode);
+}
+
+// 处理Fragment
+function processFragment(vnode: any, container: any) {
+  mountChildren(vnode.children, container);
 }
 
 // 处理普通 元素
@@ -56,8 +79,8 @@ function mountElement(vnode: any, container: any) {
 }
 
 // 挂载子节点
-function mountChildren(vnode: any, container: any) {
-  vnode.forEach((node) => {
+function mountChildren(children: any, container: any) {
+  children.forEach((node) => {
     patch(node, container);
   });
 }
