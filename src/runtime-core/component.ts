@@ -5,6 +5,8 @@ import { initProps } from "./componentProps";
 import { PublicInstanceHanlders } from "./componentPublicInstance";
 import { initSlots } from "./componentSlots";
 
+let currentInstance = null;
+
 export function createComponentInstance(vnode: any) {
   // type即当前的组件
   // 不知道为什么vue3里要写成type..，不太好理解
@@ -55,10 +57,11 @@ function setupStatefulComponent(instance: any) {
   const { setup } = Component;
 
   if (setup) {
+    setCurrentInstance(instance);
     const setupResult = setup(instance.props, {
       emit: instance.emit,
     });
-
+    setCurrentInstance(null);
     handleSetupResult(instance, setupResult);
   }
 }
@@ -83,4 +86,12 @@ function finishComponentSetup(instance: any) {
   if (Component.render) {
     instance.render = Component.render;
   }
+}
+
+export function getCurrentInstance() {
+  return currentInstance;
+}
+
+export function setCurrentInstance(instance) {
+  currentInstance = instance;
 }

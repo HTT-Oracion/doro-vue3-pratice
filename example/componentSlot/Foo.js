@@ -1,7 +1,11 @@
-import { h, renderSlots } from '../../lib/guide-mini-vue.esm.js'
+import { h, renderSlots, getCurrentInstance } from '../../lib/guide-mini-vue.esm.js'
 export default {
     name: 'foo',
-    setup () { },
+    setup () {
+
+        const currentInstance = getCurrentInstance()
+        console.log('Foo: ins', currentInstance);
+    },
     render () {
         console.log(this.$slots);
         const foo = h('p', {}, 'foo')

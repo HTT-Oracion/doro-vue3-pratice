@@ -1,4 +1,4 @@
-import { h, createTextVNode } from '../../lib/guide-mini-vue.esm.js'
+import { h, createTextVNode, getCurrentInstance } from '../../lib/guide-mini-vue.esm.js'
 import Foo from './Foo.js'
 export default {
     render () {
@@ -14,6 +14,8 @@ export default {
         return h('div', {}, [app, foo, createTextVNode('text node')])
     },
     setup () {
+        const currentInstance = getCurrentInstance()
+        console.log('app: ins', currentInstance);
         return {
             msg: 'Hello world, vue3 sourcexxx',
             count: 11,
