@@ -1,5 +1,6 @@
 import { shallowReadonly } from "../reactivity/reactive";
 import { isObject } from "../shared/index";
+import { emit } from "./componentEmit";
 import { initProps } from "./componentProps";
 import { PublicInstanceHanlders } from "./componentPublicInstance";
 
@@ -22,7 +23,12 @@ export function createComponentInstance(vnode: any) {
     vnode,
     type: vnode.type,
     setupState: {},
+    props: {},
+    emit: () => {},
   };
+
+  componet.emit = emit.bind(null, componet) as any;
+
   return componet;
 }
 
@@ -46,7 +52,9 @@ function setupStatefulComponent(instance: any) {
   const { setup } = Component;
 
   if (setup) {
-    const setupResult = setup(instance.props);
+    const setupResult = setup(instance.props, {
+      emit: instance.emit,
+    });
 
     handleSetupResult(instance, setupResult);
   }
