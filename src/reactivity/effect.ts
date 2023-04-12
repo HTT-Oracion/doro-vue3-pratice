@@ -1,4 +1,4 @@
-import { extend } from "../shared";
+import { extend } from "../shared/index";
 // 当前触发effect的实例
 let activeEffect;
 // 是否要收集依赖

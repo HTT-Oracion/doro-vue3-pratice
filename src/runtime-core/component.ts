@@ -7,7 +7,7 @@ import { initSlots } from "./componentSlots";
 
 let currentInstance = null;
 
-export function createComponentInstance(vnode: any) {
+export function createComponentInstance(vnode: any, parent: any) {
   // type即当前的组件
   // 不知道为什么vue3里要写成type..，不太好理解
   // 格式为（举例）：
@@ -29,6 +29,8 @@ export function createComponentInstance(vnode: any) {
     props: {},
     emit: () => {},
     slots: {},
+    provides: parent ? parent.provides : {},
+    parent,
   };
 
   componet.emit = emit.bind(null, componet) as any;

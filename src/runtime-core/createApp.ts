@@ -8,7 +8,7 @@ export function createApp(rootComponent) {
       // 1.把component => vnode
       const vnode = createVNode(rootComponent);
       // 2.进行渲染
-      render(vnode, rootContainer);
+      render(vnode, rootContainer, null);
     },
   };
 }
