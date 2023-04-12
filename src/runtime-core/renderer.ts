@@ -4,7 +4,11 @@ import { createAppAPI } from "./createApp";
 import { Fragment, Text } from "./vnode";
 
 export function createRenderer(options) {
-  const { createElement, patchProp, insert } = options;
+  const {
+    createElement: hostCreateElement,
+    patchProp: hostPatchProp,
+    insert: hostInsert,
+  } = options;
   // 渲染器
   function render(vnode: any, container: any, parentComponent) {
     patch(vnode, container, parentComponent);
@@ -54,7 +58,7 @@ export function createRenderer(options) {
 
   // 挂载普通元素
   function mountElement(vnode: any, container: any, parentComponent) {
-    const el = (vnode.el = createElement(vnode.type));
+    const el = (vnode.el = hostCreateElement(vnode.type));
     const { children, props, shapeFlag } = vnode;
 
     // 需要判断children是数组还是字符串
@@ -68,10 +72,10 @@ export function createRenderer(options) {
     }
     for (const key in props) {
       const val = props[key];
-      patchProp(el, key, val);
+      hostPatchProp(el, key, val);
     }
 
-    insert(el, container);
+    hostInsert(el, container);
   }
 
   // 挂载子节点
