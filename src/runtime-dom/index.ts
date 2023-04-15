@@ -17,11 +17,13 @@ function patchProp(el, key, prevVal, nextVal) {
   }
 }
 
-function insert(el, parent) {
-  parent.append(el);
+function insert(children, parent, anchor) {
+  parent.insertBefore(children, anchor || null);
 }
 
 function remove(child) {
+  console.log("remove", child);
+
   const parent = child.parentNode;
   if (parent) {
     parent.removeChild(child);
