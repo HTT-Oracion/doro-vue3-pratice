@@ -10,6 +10,8 @@ export function createRenderer(options) {
     createElement: hostCreateElement,
     patchProp: hostPatchProp,
     insert: hostInsert,
+    remove: hostRemove,
+    setElementText: hostSetElementText,
   } = options;
   // 渲染器
   function render(vnode: any, container: any, parentComponent) {
@@ -61,7 +63,7 @@ export function createRenderer(options) {
     if (!n1) {
       mountElement(n2, container, parentComponent);
     } else {
-      patchElement(n1, n2, container);
+      patchElement(n1, n2, container, parentComponent);
     }
   }
 
@@ -88,11 +90,52 @@ export function createRenderer(options) {
   }
 
   // 更新普通元素
-  function patchElement(n1: any, n2: any, container: any) {
+  function patchElement(n1: any, n2: any, container: any, parentComponent) {
     const oldProps = n1.props || EMPTY_OBJ;
     const newProps = n2.props || EMPTY_OBJ;
     const el = (n2.el = n1.el);
+
+    patchChildren(n1, n2, el, parentComponent);
     patchProps(el, oldProps, newProps);
+  }
+
+  // 更新节点内容 (children)
+  // 4种情况需要处理
+  // array => array,.array => text
+  // text => array, text => text
+  function patchChildren(n1, n2, container, parentComponent) {
+    const prevShapeFlag = n1.shapeFlag;
+    const shapeFlag = n2.shapeFlag;
+    const c1 = n1.children;
+    const c2 = n2.children;
+    if (shapeFlag & ShapeFlags.TEXT_CHILDREN) {
+      // Array => text
+      if (prevShapeFlag & ShapeFlags.ARRAY_CHILDREN) {
+        // 把旧的children清空
+        unmountChildren(c1);
+      }
+      if (c1 !== c2) {
+        // 设置text
+        hostSetElementText(container, c2);
+      }
+    } else {
+      // array => text
+      if (prevShapeFlag & ShapeFlags.TEXT_CHILDREN) {
+        hostSetElementText(container, "");
+        mountChildren(c2, container, parentComponent);
+      } else {
+        // array => array
+        console.log("array to array");
+      }
+    }
+  }
+
+  // 删除children
+  function unmountChildren(children) {
+    for (let i = 0; i < children.length; i++) {
+      const el = children[i].el;
+      hostRemove(el);
+    }
   }
 
   // 更新props
@@ -121,6 +164,8 @@ export function createRenderer(options) {
 
   // 挂载子节点
   function mountChildren(children: any, container: any, parentComponent) {
+    console.log("mountChildren", children);
+
     children.forEach((node) => {
       patch(null, node, container, parentComponent);
     });
