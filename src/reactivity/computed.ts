@@ -1,12 +1,10 @@
 import { ReactiveEffect } from "./effect";
 
 class ComputedRefImpl {
-  private _getter: any;
   private _dirty: boolean = true; // !! // 用于做缓存处理，重复调用.value时, 不重复进行计算
   private _value: any;
   private _effect: ReactiveEffect;
   constructor(getter) {
-    this._getter = getter;
     // 初始化的时候，进行依赖收集，schduler用来改变`_dirty`
     // 当传入的getter发生改变的时候，会触发 `trigger`
     // 此时就需要把 `_dirty` 变为true
