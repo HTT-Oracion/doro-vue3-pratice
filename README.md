@@ -50,3 +50,13 @@ describe("reactive", () => {
 第三点: 。。。
 
 其中最重要的就是 先写测试代码，再写实际代码，最后完善和重构代码。
+
+
+## 提交规范
+fix: 修复
+feat: 新增功能
+refactor: 重构
+docs: 文档
+chore: 核心 如 `rollup.config.js`配置
+style: 样式修改
+...
