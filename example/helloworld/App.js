@@ -8,7 +8,9 @@ export default {
             tag: 'div',
             class: ['cs1', 'cs2'],
             onClick: () => {
-                console.log('click!!');
+                this.count = 444
+                eff
+                console.log('count click');
             }
         }, [
             h("p", { class: 'red title' }, "title"),
@@ -17,9 +19,15 @@ export default {
         ])
     },
     setup () {
+
+        function handleClick () {
+            this.msg = '456'
+        }
+
         return {
             msg: 'Hello world, vue3 sourcexxx',
             count: 11,
+            handleClick
         }
     }
 }
